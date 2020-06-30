@@ -1,4 +1,5 @@
 import os
+import codecs
 from typing import List
 from transliterate import translit
 from shutil import copyfile
@@ -62,9 +63,10 @@ def create_sql_query(records: List[str]) -> None:
 
     """
     with open(file='add_new_values.sql', mode='w') as file_writer:
-        file_writer.write(""" INSERT INTO records (name, keywords, link) VALUES \n""")
+        file_writer.write(""" INSERT INTO records (name, link) VALUES \n""")
         for index, item in enumerate(records):
-            file_writer.write(f'("{item[0]}","", "{item[1]}")')
+            name, last_name = item[0].split(' ', 1)
+            file_writer.write(f'("{name.upper()} {last_name}", "{item[1]}")')
             if index != len(records) - 1:
                 file_writer.write(", \n")
 
@@ -118,7 +120,7 @@ class Parser:
                         self.web_content = []
                         file_path = f"{directories[0]}{os.path.sep}{file}"
                         try:
-                            with open(file=file_path, mode='r', encoding='utf-8') as file_reader:
+                            with open(file=file_path, mode='r', encoding='cp1251') as file_reader:
                                 lines = file_reader.readlines()
                                 for line in lines:
                                     line = f'<p>{line[:-1]}</p>\n'
@@ -163,9 +165,15 @@ class Parser:
                            '''
                 content.insert(0, img_tag)  # insert <img> at the beginning of the inc.php file
                 # Write all content to a file
-            with open(file=file_name, mode='w') as file_writer:
+            with open(file=file_name, mode='w', encoding='cp1251') as file_writer:
                 for string in content:
                     file_writer.write(string + '\n')
+                # and convert it to UTF-8
+            f = codecs.open(filename=file_name, mode='r', encoding='cp1251')
+            u = f.read()
+            out = codecs.open(filename=file_name, mode='w', encoding='utf8')
+            out.write(u)
+
         except OSError:
             print('Something wrong')
             raise
