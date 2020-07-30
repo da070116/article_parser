@@ -5,9 +5,6 @@ This console application allows to parse text files into a proper article files 
 
 ## Getting Started
 
-These instructions will get you a copy of the project up and running on your local machine 
-for development and testing purposes. See deployment for notes on how to deploy the project 
-on a live system.
 
 Just download the project and run application.
 
